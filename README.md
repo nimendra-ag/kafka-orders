@@ -23,7 +23,7 @@ Producer ──(Avro)──▶ Kafka Topic: "orders" ──▶ Consumer
 ### 1. Clone and install dependencies
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/nimendra-ag/kafka-orders
 cd kafka-orders
 python -m venv venv
 source venv/bin/activate        # Linux/Mac
