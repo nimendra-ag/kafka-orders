@@ -1,10 +1,3 @@
-"""
-Kafka Avro Consumer — processes order messages with:
-  - Running average of prices (real-time aggregation)
-  - Retry logic for transient failures
-  - Dead Letter Queue (DLQ) for permanently failed messages
-"""
-
 import json
 import logging
 from pathlib import Path
@@ -14,9 +7,6 @@ from confluent_kafka.serialization import SerializationContext, MessageField
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 
-# ---------------------------------------------------------------------------
-# Config
-# ---------------------------------------------------------------------------
 KAFKA_BOOTSTRAP = "localhost:9092"
 SCHEMA_REGISTRY_URL = "http://localhost:8082"
 TOPIC = "orders"
@@ -32,10 +22,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 def load_schema(path: Path) -> str:
     with open(path, "r") as f:
         return f.read()
@@ -82,17 +68,17 @@ def process_order(order: dict, running_avg: RunningAverage) -> None:
     Business logic: validate and aggregate.
     Raises ValueError for permanent failures, RuntimeError for transient ones.
     """
-    # --- Permanent failure: bad data ---
+    # Permanent failure: bad data
     if order.get("price") is None or order["price"] < 0:
         raise ValueError(f"Invalid price in order {order.get('orderId')}")
 
-    # --- Transient failure simulation (for demo purposes) ---
+    #  Transient failure simulation (for demo purposes) 
     # Uncomment the lines below to simulate random transient errors:
-    import random
-    if random.random() < 0.8:
-        raise RuntimeError("Simulated transient failure")
+    # import random
+    # if random.random() < 0.8:
+    #     raise RuntimeError("Simulated transient failure")
 
-    # --- Happy path: aggregate ---
+    #  Happy path: aggregate 
     avg = running_avg.update(order["price"])
     logger.info(
         "Processed order=%s  product=%-10s price=%8.2f  |  running_avg=%.2f  (n=%d)",
@@ -103,10 +89,6 @@ def process_order(order: dict, running_avg: RunningAverage) -> None:
         running_avg.count,
     )
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
 def main():
     # Schema Registry + Avro deserializer
     sr_client = SchemaRegistryClient({"url": SCHEMA_REGISTRY_URL})

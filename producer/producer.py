@@ -1,7 +1,3 @@
-"""
-Kafka Avro Producer — generates randomized order messages.
-"""
-
 import json
 import random
 import time
@@ -17,9 +13,7 @@ from confluent_kafka.serialization import (
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroSerializer
 
-# ---------------------------------------------------------------------------
-# Config
-# ---------------------------------------------------------------------------
+
 KAFKA_BOOTSTRAP = "localhost:9092"
 SCHEMA_REGISTRY_URL = "http://localhost:8082"
 TOPIC = "orders"
@@ -35,10 +29,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 def load_schema(path: Path) -> str:
     """Read the .avsc file and return its JSON string."""
     with open(path, "r") as f:
@@ -63,10 +53,6 @@ def delivery_callback(err, msg):
             msg.key(),
         )
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
 def main():
     # Schema Registry client
     sr_client = SchemaRegistryClient({"url": SCHEMA_REGISTRY_URL})
